@@ -11,7 +11,6 @@ module Rack
     def call(env)
 
       if should_show_prerendered_page(env)
-        puts 'getting prerendered for ' + Rack::Request.new(env).url
         prerendered_response = get_prerendered_page_response(env)
 
         if prerendered_response && prerendered_response.is_a?(Net::HTTPSuccess)
@@ -48,7 +47,9 @@ module Rack
     def get_prerendered_page_response(env)
       begin
         url = Rack::Request.new(env).url
-        Net::HTTP.get_response(URI.parse("http://localhost:3000/#{url}"))
+        prerender_url = ENV['PRERENDER_URL'] || 'http://prerender.herokuapp.com/'
+        forward_slash = prerender_url[-1, 1] == '/' ? '' : '/'
+        Net::HTTP.get_response(URI.parse("#{prerender_url}#{forward_slash}#{url}"))
       rescue
         nil
       end

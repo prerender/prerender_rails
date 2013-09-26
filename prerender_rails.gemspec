@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = PrerenderRails::VERSION
   spec.authors       = ["Todd Hooper"]
   spec.email         = ["thoop3@gmail.com"]
-  spec.description   = %q{Prerender your backbone/angular/javascript rendered application on the fly when search engines crawl}
+  spec.description   = %q{Rails middleware to prerender your javascript heavy pages on the fly by a phantomjs service}
   spec.summary       = %q{Prerender your backbone/angular/javascript rendered application on the fly when search engines crawl}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/collectiveip/prerender_rails"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
