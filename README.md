@@ -26,7 +26,7 @@ Or install it yourself as:
 
 In `config/environment/production.rb`, add this line:
 
-```rails
+```ruby
 	config.middleware.use Rack::Prerender
 ```
 
