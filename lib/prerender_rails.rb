@@ -26,9 +26,9 @@ module Rack
       request = Rack::Request.new(env)
       user_agent = env['HTTP_USER_AGENT'].downcase
 
-      should_show_based_on_agent_string = user_agent == 'googlebot'
-                        user_agent == 'yahoo'
-                        user_agent == 'bingbot'
+      should_show_based_on_agent_string = user_agent == 'googlebot' ||
+                        user_agent == 'yahoo' ||
+                        user_agent == 'bingbot' ||
                         user_agent == 'baiduspider'
 
       return false if !should_show_based_on_agent_string #short circuit
