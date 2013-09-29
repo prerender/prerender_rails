@@ -1,46 +1,68 @@
-Prerender Rails
+Prerender Rails [![Build Status](https://travis-ci.org/collectiveip/prerender_rails.png)](https://travis-ci.org/collectiveip/prerender_rails)
 =========================== 
 
-This gem installs middleware that prerenders a javascript-rendered page and sends the HTML to a search engine crawler for SEO. It checks the agent string on the requesting browser for a crawler, and continues on to your normal routes if the requester is not a crawler.
+Are you using backbone, angular, emberjs, etc, but you're unsure about the SEO implications?
 
-## How it works
-* Check to make sure the request is from a crawler and we aren't requesting a resource (js, css, etc...)
-* Make a `GET` request to the [prerender service](https://github.com/collectiveip/prerender) for the page's prerendered HTML
-* Return that HTML to the crawler
-
-## Installation
+Use this gem to install rails middleware that prerenders a javascript-rendered page and returns the HTML to the search engine crawler for SEO.
 
 Add this line to your application's Gemfile:
 
     gem 'prerender_rails'
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install prerender_rails
-
-## Usage
-
-In `config/environment/production.rb`, add this line:
+And in `config/environment/production.rb`, add this line:
 
 ```ruby
 	config.middleware.use Rack::Prerender
 ```
 
-If you've deployed the prerender service on your own, set the `PRERENDER_URL` environment variable so that this gem points there instead. Otherwise, it will default to the service already deployed at `http://prerender.herokuapp.com`
+## How it works
+1. Check to make sure we should show a prerendered page
+	1. Check if the request is from a crawler (agent string)
+	2. Check to make sure we aren't requesting a resource (js, css, etc...)
+	3. (optional) Check to make sure the url is in the whitelist
+	4. (optional) Check to make sure the url isn't in the blacklist
+2. Make a `GET` request to the [prerender service](https://github.com/collectiveip/prerender)(phantomjs server) for the page's prerendered HTML
+3. Return that HTML to the crawler
 
-	$ export PRERENDER_URL=<new url>
+## Customization
 
-## Contributing
+### Whitelist
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+Whitelist a single url path or multiple url paths. If a whitelist is supplied, only url's containing a whitelist path will be prerendered.
+```ruby
+config.middleware.use Rack::Prerender, whitelist: '/search/tto'
+```
+```ruby
+config.middleware.use Rack::Prerender, whitelist: ['/search', '/profile']
+```
+
+### Blacklist
+
+Blacklist a single url path or multiple url paths. If a blacklist is supplied, all url's will be prerendered except ones containing a blacklist path.
+```ruby
+config.middleware.use Rack::Prerender, blacklist: '/search/tto'
+```
+```ruby
+config.middleware.use Rack::Prerender, blacklist: ['/search', '/profile']
+```
+
+### Using your own prerender service
+
+If you've deployed the prerender service on your own, set the `PRERENDER_SERVICE_URL` environment variable so that this package points there instead. Otherwise, it will default to the service already deployed at `http://prerender.herokuapp.com`
+
+	$ export PRERENDER_SERVICE_URL=<new url>
+
+## Testing
+
+If you want to make sure your pages are rendering correctly:
+
+1. Open the Developer Tools in Chrome (Cmd + Atl + J)
+2. Click the Settings gear in the bottom right corner.
+3. Click "Overrides" on the left side of the settings panel.
+4. Check the "User Agent" checkbox.
+6. Choose "Other..." from the User Agent dropdown.
+7. Type `googlebot` into the input box.
+8. Refresh the page (make sure to keep the developer tools open).
 
 ## License
 
