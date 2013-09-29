@@ -28,22 +28,22 @@ And in `config/environment/production.rb`, add this line:
 
 ### Whitelist
 
-Whitelist a single url path or multiple url paths. If a whitelist is supplied, only url's containing a whitelist path will be prerendered.
+Whitelist a single url path or multiple url paths. Compares using regex, so be specific when possible. If a whitelist is supplied, only url's containing a whitelist path will be prerendered.
 ```ruby
-config.middleware.use Rack::Prerender, whitelist: '/search/tto'
+config.middleware.use Rack::Prerender, whitelist: '^/search'
 ```
 ```ruby
-config.middleware.use Rack::Prerender, whitelist: ['/search', '/profile']
+config.middleware.use Rack::Prerender, whitelist: ['/search', '/users/.*/profile']
 ```
 
 ### Blacklist
 
-Blacklist a single url path or multiple url paths. If a blacklist is supplied, all url's will be prerendered except ones containing a blacklist path.
+Blacklist a single url path or multiple url paths. Compares using regex, so be specific when possible. If a blacklist is supplied, all url's will be prerendered except ones containing a blacklist path.
 ```ruby
-config.middleware.use Rack::Prerender, blacklist: '/search/tto'
+config.middleware.use Rack::Prerender, blacklist: '^/search'
 ```
 ```ruby
-config.middleware.use Rack::Prerender, blacklist: ['/search', '/profile']
+config.middleware.use Rack::Prerender, blacklist: ['/search', '/users/.*/profile']
 ```
 
 ### Using your own prerender service
