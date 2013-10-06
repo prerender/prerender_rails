@@ -3,7 +3,9 @@ Prerender Rails [![Build Status](https://travis-ci.org/collectiveip/prerender_ra
 
 Are you using backbone, angular, emberjs, etc, but you're unsure about the SEO implications?
 
-Use this gem to install rails middleware that prerenders a javascript-rendered page and returns the HTML to the search engine crawler for SEO.
+Use this gem to install rails middleware that prerenders a javascript-rendered page using an external service and returns the HTML to the search engine crawler for SEO.
+
+`Note:` Make sure you have more than one webserver thread/process running because the prerender service will make a request to your server to render the HTML.
 
 Add this line to your application's Gemfile:
 
