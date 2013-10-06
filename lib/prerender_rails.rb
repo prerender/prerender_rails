@@ -55,7 +55,7 @@ module Rack
       return false if @extensions_to_ignore.any? { |extension| request.path.include? extension }
 
       #if it is a bot and not requesting a resource and is not whitelisted...dont prerender
-      return false if @options[:whitelist].is_a?(Array) && @options[:whitelist].all? { |whitelisted| !!Regexp.new(whitelisted).match(request.path) }
+      return false if @options[:whitelist].is_a?(Array) && @options[:whitelist].all? { |whitelisted| !Regexp.new(whitelisted).match(request.path) }
 
       #if it is a bot and not requesting a resource and is not blacklisted(url or referer)...dont prerender
       if @options[:blacklist].is_a?(Array) && @options[:blacklist].any? { |blacklisted|
