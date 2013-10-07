@@ -49,7 +49,7 @@ module Rack
       request = Rack::Request.new(env)
 
       #if it is not a bot...dont prerender
-      return false if !@crawler_user_agents.include?(user_agent.downcase)
+      return false if @crawler_user_agents.all? { |crawler_user_agent| !user_agent.downcase.include?(crawler_user_agent.downcase) }
 
       #if it is a bot and is requesting a resource...dont prerender
       return false if @extensions_to_ignore.any? { |extension| request.path.include? extension }
