@@ -7,7 +7,8 @@ module Rack
         'googlebot',
         'yahoo',
         'bingbot',
-        'baiduspider'
+        'baiduspider',
+        'facebookexternalhit'
       ]
 
       @extensions_to_ignore = [
@@ -19,7 +20,33 @@ module Rack
         '.jpeg',
         '.gif',
         '.pdf',
-        '.doc'
+        '.doc',
+        '.txt',
+        '.zip',
+        '.mp3',
+        '.rar',
+        '.exe',
+        '.wmv',
+        '.doc',
+        '.avi',
+        '.ppt',
+        '.mpg',
+        '.mpeg',
+        '.tif',
+        '.wav',
+        '.mov',
+        '.psd',
+        '.ai',
+        '.xls',
+        '.mp4',
+        '.m4a',
+        '.swf',
+        '.dat',
+        '.dmg',
+        '.iso',
+        '.flv',
+        '.m4v',
+        '.torrent'
       ]
 
       @options = options
