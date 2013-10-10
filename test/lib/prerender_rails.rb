@@ -2,7 +2,7 @@ require_relative '../test_helper'
  
 describe Rack::Prerender do
 
-  bot = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+  bot = 'Baiduspider+(+http://www.baidu.com/search/spider.htm)'
   user = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'
 
   before :each do
@@ -15,6 +15,14 @@ describe Rack::Prerender do
 
   it "should return a prerendered reponse for a crawler" do
     request = Rack::MockRequest.env_for "/", "HTTP_USER_AGENT" => bot
+    stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
+    response = Rack::Prerender.new(@app).call(request)
+
+    assert_equal response[2].body, ["<html></html>"]
+  end
+
+  it "should return a prerendered reponse if user is a bot by checking for _escaped_fragment_" do
+    request = Rack::MockRequest.env_for "/path?_escaped_fragment_=yes", "HTTP_USER_AGENT" => user
     stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
     response = Rack::Prerender.new(@app).call(request)
 
@@ -35,26 +43,11 @@ describe Rack::Prerender do
     assert_equal response[2], ""
   end
 
-  it "should continue to app routes if the url is not part of the whitelist" do
-    request = Rack::MockRequest.env_for "/profile/blah", "HTTP_USER_AGENT" => bot
-    response = Rack::Prerender.new(@app, whitelist: ['/search', '/help']).call(request)
-
-    assert_equal response[2], ""
-  end
-
   it "should continue to app routes if the url is not part of the regex specific whitelist" do
     request = Rack::MockRequest.env_for "/saved/search/blah", "HTTP_USER_AGENT" => bot
     response = Rack::Prerender.new(@app, whitelist: ['^/search', '/help']).call(request)
 
     assert_equal response[2], ""
-  end
-
-  it "should return a prerendered response if the url is part of the whitelist" do
-    request = Rack::MockRequest.env_for "/search/things/123/page", "HTTP_USER_AGENT" => bot
-    stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
-    response = Rack::Prerender.new(@app, whitelist: ['/search', '/help']).call(request)
-
-    assert_equal response[2].body, ["<html></html>"]
   end
 
   it "should return a prerendered response if the url is part of the regex specific whitelist" do
@@ -65,26 +58,11 @@ describe Rack::Prerender do
     assert_equal response[2].body, ["<html></html>"]
   end
 
-  it "should continue to app routes if the url is part of the blacklist" do
-    request = Rack::MockRequest.env_for "/search/things/123/page", "HTTP_USER_AGENT" => bot
-    response = Rack::Prerender.new(@app, blacklist: ['/search', '/help']).call(request)
-
-    assert_equal response[2], ""
-  end
-
   it "should continue to app routes if the url is part of the regex specific blacklist" do
     request = Rack::MockRequest.env_for "/search/things/123/page", "HTTP_USER_AGENT" => bot
     response = Rack::Prerender.new(@app, blacklist: ['^/search', '/help']).call(request)
 
     assert_equal response[2], ""
-  end
-
-  it "should return a prerendered response if the url is not part of the blacklist" do
-    request = Rack::MockRequest.env_for "/profile/blah", "HTTP_USER_AGENT" => bot
-    stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
-    response = Rack::Prerender.new(@app, blacklist: ['/search', '/help']).call(request)
-
-    assert_equal response[2].body, ["<html></html>"]
   end
 
   it "should return a prerendered response if the url is not part of the regex specific blacklist" do
@@ -95,26 +73,11 @@ describe Rack::Prerender do
     assert_equal response[2].body, ["<html></html>"]
   end
 
-  it "should continue to app routes if the referer is part of the blacklist" do
-    request = Rack::MockRequest.env_for "/api/results", "HTTP_USER_AGENT" => bot, "HTTP_REFERER" => '/search'
-    response = Rack::Prerender.new(@app, blacklist: ['/search', '/help']).call(request)
-
-    assert_equal response[2], ""
-  end
-
   it "should continue to app routes if the referer is part of the regex specific blacklist" do
     request = Rack::MockRequest.env_for "/api/results", "HTTP_USER_AGENT" => bot, "HTTP_REFERER" => '/search'
     response = Rack::Prerender.new(@app, blacklist: ['^/search', '/help']).call(request)
 
     assert_equal response[2], ""
-  end
-
-  it "should return a prerendered response if the referer is not part of the blacklist" do
-    request = Rack::MockRequest.env_for "/api/results", "HTTP_USER_AGENT" => bot, "HTTP_REFERER" => '/search'
-    stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
-    response = Rack::Prerender.new(@app, blacklist: ['/profile', '/help']).call(request)
-
-    assert_equal response[2].body, ["<html></html>"]
   end
 
   it "should return a prerendered response if the referer is not part of the regex specific blacklist" do
@@ -128,6 +91,7 @@ describe Rack::Prerender do
   describe '#buildApiUrl' do
     it "should build the correct api url with the default url" do
       request = Rack::MockRequest.env_for "https://google.com/search?q=javascript"
+      ENV['PRERENDER_SERVICE_URL'] = nil
       assert_equal @prerender.build_api_url(request), 'http://prerender.herokuapp.com/https://google.com/search?q=javascript'
     end
 
