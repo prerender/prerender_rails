@@ -54,7 +54,7 @@ If you've deployed the prerender service on your own, set the `PRERENDER_SERVICE
 
 	$ export PRERENDER_SERVICE_URL=<new url>
 
-As alternatie you can pass `prerender_service_url` option while during initialization of middleware
+As an alternative, you can pass `prerender_service_url` in the options object during initialization of the middleware
 
 ``` ruby
 config.middleware.use Rack::Prerender, prerender_service_url: '<new url>'
