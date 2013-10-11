@@ -5,6 +5,8 @@ Are you using backbone, angular, emberjs, etc, but you're unsure about the SEO i
 
 Use this gem to install rails middleware that prerenders a javascript-rendered page using an external service and returns the HTML to the search engine crawler for SEO.
 
+`Note:` Add the `<meta name="fragment" content="!">` tag to the `<head>` of all of your pages if you are using normal urls or html5 pushstate. If you are using a `#` in your urls, make sure to change it to `#!`. [View Google's ajax crawling protocol](https://developers.google.com/webmasters/ajax-crawling/docs/getting-started)
+
 `Note:` Make sure you have more than one webserver thread/process running because the prerender service will make a request to your server to render the HTML.
 
 Add this line to your application's Gemfile:
@@ -19,7 +21,7 @@ And in `config/environment/production.rb`, add this line:
 
 ## How it works
 1. Check to make sure we should show a prerendered page
-	1. Check if the request is from a crawler (_escaped_fragment_ or agent string)
+	1. Check if the request is from a crawler (`_escaped_fragment_` or agent string)
 	2. Check to make sure we aren't requesting a resource (js, css, etc...)
 	3. (optional) Check to make sure the url is in the whitelist
 	4. (optional) Check to make sure the url isn't in the blacklist
