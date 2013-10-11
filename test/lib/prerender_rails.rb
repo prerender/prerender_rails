@@ -137,6 +137,12 @@ describe Rack::Prerender do
       assert_equal @prerender.build_api_url(request), 'http://prerenderurl.com/https://google.com/search?q=javascript'
       ENV['PRERENDER_SERVICE_URL'] = nil
     end
+
+    it "should build the correct api url with an initialization variable url" do
+      @prerender = Rack::Prerender.new(@app, prerender_service_url: 'http://prerenderurl.com')
+      request = Rack::MockRequest.env_for "https://google.com/search?q=javascript"
+      assert_equal @prerender.build_api_url(request), 'http://prerenderurl.com/https://google.com/search?q=javascript'
+    end
   end
 
 end
