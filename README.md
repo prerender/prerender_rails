@@ -60,6 +60,12 @@ Or on heroku:
 
 	$ heroku config:add PRERENDER_SERVICE_URL=<new url>
 
+As an alternative, you can pass `prerender_service_url` in the options object during initialization of the middleware
+
+``` ruby
+config.middleware.use Rack::Prerender, prerender_service_url: '<new url>'
+```
+
 ## Testing
 
 If you want to make sure your pages are rendering correctly:
