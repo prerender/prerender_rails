@@ -3,13 +3,13 @@ module Rack
     require 'net/http'
 
     def initialize(app, options={})
-      # googlebot, yahoo, and bingbot are not in this list because
-      # we support _escaped_fragment_ instead of checking user
-      # agent for those crawlers
+      # googlebot, yahoo, and bingbot are in this list even though
+      # we support _escaped_fragment_ to ensure it works for people
+      # who might not use the _escaped_fragment_ protocol
       @crawler_user_agents = [
-        # 'googlebot',
-        # 'yahoo',
-        # 'bingbot',
+        'googlebot',
+        'yahoo',
+        'bingbot',
         'baiduspider',
         'facebookexternalhit'
       ]
@@ -79,7 +79,7 @@ module Rack
       request = Rack::Request.new(env)
 
       return true if request.query_string.include? '_escaped_fragment_'
-      
+
       #if it is not a bot...dont prerender
       return false if @crawler_user_agents.all? { |crawler_user_agent| !user_agent.downcase.include?(crawler_user_agent.downcase) }
 
