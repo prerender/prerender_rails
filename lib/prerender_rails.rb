@@ -11,7 +11,8 @@ module Rack
         'yahoo',
         'bingbot',
         'baiduspider',
-        'facebookexternalhit'
+        'facebookexternalhit',
+        'twitterbot'
       ]
 
       @extensions_to_ignore = [
