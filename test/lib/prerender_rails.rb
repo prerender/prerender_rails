@@ -22,11 +22,18 @@ describe Rack::Prerender do
   end
 
   it "should return a prerendered reponse if user is a bot by checking for _escaped_fragment_" do
-    request = Rack::MockRequest.env_for "/path?_escaped_fragment_=yes", "HTTP_USER_AGENT" => user
+    request = Rack::MockRequest.env_for "/path?_escaped_fragment_=", "HTTP_USER_AGENT" => user
     stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
     response = Rack::Prerender.new(@app).call(request)
 
     assert_equal response[2].body, ["<html></html>"]
+  end
+
+  it "should continue to app routes if the url is a bad url with _escaped_fragment_" do
+    request = Rack::MockRequest.env_for "/path?query=string?_escaped_fragment_=", "HTTP_USER_AGENT" => user
+    response = Rack::Prerender.new(@app).call(request)
+
+    assert_equal response[2], ""
   end
 
   it "should continue to app routes if user is not a bot by checking agent string" do

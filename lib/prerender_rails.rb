@@ -79,7 +79,7 @@ module Rack
 
       request = Rack::Request.new(env)
 
-      return true if request.query_string.include? '_escaped_fragment_'
+      return true if Rack::Utils.parse_query(request.query_string).has_key?('_escaped_fragment_')
 
       #if it is not a bot...dont prerender
       return false if @crawler_user_agents.all? { |crawler_user_agent| !user_agent.downcase.include?(crawler_user_agent.downcase) }
