@@ -1,4 +1,4 @@
-Prerender Rails [![Build Status](https://travis-ci.org/collectiveip/prerender_rails.png)](https://travis-ci.org/collectiveip/prerender_rails)
+Prerender Rails [![Build Status](https://travis-ci.org/collectiveip/prerender_rails.png)](https://travis-ci.org/collectiveip/prerender_rails) [![Gem Version](https://badge.fury.io/rb/prerender_rails.png)](http://badge.fury.io/rb/prerender_rails)
 =========================== 
 
 Are you using backbone, angular, emberjs, etc, but you're unsure about the SEO implications?

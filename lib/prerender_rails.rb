@@ -64,8 +64,8 @@ module Rack
       if should_show_prerendered_page(env)
         prerendered_response = get_prerendered_page_response(env)
 
-        if prerendered_response && prerendered_response.is_a?(Net::HTTPSuccess)
-          response = Rack::Response.new(prerendered_response.body, 200, [])
+        if prerendered_response
+          response = Rack::Response.new(prerendered_response.body, prerendered_response.code, [])
           return response.finish
         end
       end
