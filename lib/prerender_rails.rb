@@ -18,6 +18,7 @@ module Rack
       @extensions_to_ignore = [
         '.js',
         '.css',
+        '.xml',
         '.less',
         '.png',
         '.jpg',
