@@ -15,7 +15,7 @@ describe Rack::Prerender do
 
   it "should return a prerendered response for a crawler with the returned status code" do
     request = Rack::MockRequest.env_for "/", "HTTP_USER_AGENT" => bot
-    stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>", :status => 201)
+    stub_request(:get, @prerender.build_api_url(request)).with(:headers => { 'User-Agent' => bot }).to_return(:body => "<html></html>", :status => 201)
     response = Rack::Prerender.new(@app).call(request)
 
     assert_equal response[2].body, ["<html></html>"]
@@ -24,7 +24,7 @@ describe Rack::Prerender do
 
   it "should return a prerendered reponse if user is a bot by checking for _escaped_fragment_" do
     request = Rack::MockRequest.env_for "/path?_escaped_fragment_=", "HTTP_USER_AGENT" => user
-    stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
+    stub_request(:get, @prerender.build_api_url(request)).with(:headers => { 'User-Agent' => user }).to_return(:body => "<html></html>")
     response = Rack::Prerender.new(@app).call(request)
 
     assert_equal response[2].body, ["<html></html>"]

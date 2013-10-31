@@ -110,7 +110,9 @@ module Rack
 
     def get_prerendered_page_response(env)
       begin
-        Net::HTTP.get_response(URI.parse(build_api_url(env)))
+        url = URI.parse(build_api_url(env))
+        req = Net::HTTP::Get.new(url.request_uri, { 'User-Agent' => env['HTTP_USER_AGENT'] })
+        response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
       rescue
         nil
       end
