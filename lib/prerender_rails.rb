@@ -77,6 +77,7 @@ module Rack
     def should_show_prerendered_page(env)
       user_agent = env['HTTP_USER_AGENT']
       return false if !user_agent
+      return false if env['REQUEST_METHOD'] != 'GET'
 
       request = Rack::Request.new(env)
 
