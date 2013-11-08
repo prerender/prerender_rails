@@ -66,7 +66,7 @@ module Rack
         prerendered_response = get_prerendered_page_response(env)
 
         if prerendered_response
-          response = Rack::Response.new(prerendered_response.body, prerendered_response.code, [])
+          response = Rack::Response.new(prerendered_response.body, prerendered_response.code, prerendered_response.header)
           return response.finish
         end
       end
