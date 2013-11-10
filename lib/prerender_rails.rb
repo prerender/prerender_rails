@@ -112,7 +112,9 @@ module Rack
     def get_prerendered_page_response(env)
       begin
         url = URI.parse(build_api_url(env))
-        req = Net::HTTP::Get.new(url.request_uri, { 'User-Agent' => env['HTTP_USER_AGENT'] })
+        headers = { 'User-Agent' => env['HTTP_USER_AGENT'] }
+        headers['X-Prerender-Token'] = ENV['PRERENDER_TOKEN'] if ENV['PRERENDER_TOKEN']
+        req = Net::HTTP::Get.new(url.request_uri, headers)
         response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
       rescue
         nil
