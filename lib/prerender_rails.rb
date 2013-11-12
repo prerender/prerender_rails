@@ -155,7 +155,6 @@ module Rack
       # Pass through only applicable 
       prerendered_response.each do |name, val|
         next if DISALLOWED_PHANTOMJS_HEADERS.include? name
-        Rails.logger.debug "Prerender response header: #{name} #{val}"
         response[name] = val
       end
 
