@@ -122,7 +122,14 @@ module Rack
     end
 
     def build_api_url(env)
-      url = Rack::Request.new(env).url
+      new_env = env
+      if env["CF-VISITOR"]
+        match = /"scheme":"(http|https)"/.match(env['CF-VISITOR'])
+        new_env["HTTPS"] = true and new_env["rack.url_scheme"] = "https" and new_env["SERVER_PORT"] = 443 if (match && match[1] == "https")
+        new_env["HTTPS"] = false and new_env["rack.url_scheme"] = "http" and new_env["SERVER_PORT"] = 80 if (match && match[1] == "http")
+      end
+
+      url = Rack::Request.new(new_env).url
       prerender_url = get_prerender_service_url()
       forward_slash = prerender_url[-1, 1] == '/' ? '' : '/'
       "#{prerender_url}#{forward_slash}#{url}"
