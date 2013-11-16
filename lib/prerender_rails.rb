@@ -57,6 +57,8 @@ module Rack
       @options = options
       @options[:whitelist] = [@options[:whitelist]] if @options[:whitelist].is_a? String
       @options[:blacklist] = [@options[:blacklist]] if @options[:blacklist].is_a? String
+      @extensions_to_ignore = @options[:extensions_to_ignore] if @options[:extensions_to_ignore]
+      @crawler_user_agents = @options[:crawler_user_agents] if @options[:crawler_user_agents]
       @app = app
     end
 
