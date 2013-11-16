@@ -62,19 +62,28 @@ module Rack
       @app = app
     end
 
-    def call(env)
 
+    def call(env)
       if should_show_prerendered_page(env)
+
+        cached_response = before_render(env)
+
+        if cached_response && cached_response.is_a?(Rack::Response)
+          return cached_response.finish
+        end
+
         prerendered_response = get_prerendered_page_response(env)
 
         if prerendered_response
-          response = Rack::Response.new(prerendered_response.body, prerendered_response.code, prerendered_response.header)
+          response = build_rack_response_from_prerender(prerendered_response)
+          after_render(env, prerendered_response)
           return response.finish
         end
       end
 
       @app.call(env)  
     end
+
 
     def should_show_prerendered_page(env)
       user_agent = env['HTTP_USER_AGENT']
@@ -111,6 +120,7 @@ module Rack
       return true
     end
 
+
     def get_prerendered_page_response(env)
       begin
         url = URI.parse(build_api_url(env))
@@ -122,6 +132,7 @@ module Rack
         nil
       end
     end
+
 
     def build_api_url(env)
       new_env = env
@@ -137,8 +148,37 @@ module Rack
       "#{prerender_url}#{forward_slash}#{url}"
     end
 
+
     def get_prerender_service_url
       @options[:prerender_service_url] || ENV['PRERENDER_SERVICE_URL'] || 'http://prerender.herokuapp.com/'
+    end
+
+
+    def build_rack_response_from_prerender(prerendered_response)
+      response = Rack::Response.new(prerendered_response.body, prerendered_response.code, prerendered_response.header)
+
+      @options[:build_rack_response_from_prerender].call(response, prerendered_response) if @options[:build_rack_response_from_prerender]
+
+      response
+    end
+
+
+    def before_render(env)
+      return nil unless @options[:before_render]
+
+      cached_render = @options[:before_render].call(env)
+      
+      if cached_render && cached_render.is_a?(String)
+        Rack::Response.new(cached_render, 200, [])
+      else
+        nil
+      end
+    end
+
+
+    def after_render(env, response)
+      return true unless @options[:after_render]
+      @options[:after_render].call(env, response)
     end
   end
 end
