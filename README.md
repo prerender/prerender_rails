@@ -5,9 +5,11 @@ Are you using backbone, angular, emberjs, etc, but you're unsure about the SEO i
 
 Use this gem to install rails middleware that prerenders a javascript-rendered page using an external service and returns the HTML to the search engine crawler for SEO.
 
-`Note:` If you are using a `#` in your urls, make sure to change it to `#!`. [View Google's ajax crawling protocol](https://developers.google.com/webmasters/ajax-crawling/docs/getting-started)
+`Note:`
 
-`Note:` Make sure you have more than one webserver thread/process running because the prerender service will make a request to your server to render the HTML.
+* If you are using a `#` in your urls, make sure to change it to `#!`. [View Google's ajax crawling protocol](https://developers.google.com/webmasters/ajax-crawling/docs/getting-started)
+* Make sure you have more than one webserver thread/process running because the prerender service will make a request to your server to render the HTML.
+* If you're testing on localhost, you need to run the prerender server locally so that it can access your server.
 
 Add this line to your application's Gemfile:
 
@@ -27,6 +29,29 @@ And in `config/environment/production.rb`, add this line:
 	4. (optional) Check to make sure the url isn't in the blacklist
 2. Make a `GET` request to the [prerender service](https://github.com/collectiveip/prerender)(phantomjs server) for the page's prerendered HTML
 3. Return that HTML to the crawler
+
+
+## Caching
+
+This rails middleware is ready to be used with [redis](http://redis.io/) or [memcached](http://memcached.org/) to return prerendered pages in milliseconds.
+
+When setting up the middleware in `config/environment/production.rb`, you can add a `before_render` method and `after_render` method for caching.
+
+Here's an example testing a local redis cache:
+
+_Put this in `config/environment/development.rb`, and add `gem 'redis'` to your Gemfile._
+
+```ruby
+require 'redis'
+@redis = Redis.new
+config.middleware.use Rack::Prerender,
+  before_render: (Proc.new do |env|
+    @redis.get(Rack::Request.new(env).url)
+  end),
+  after_render: (Proc.new do |env, response|
+    @redis.set(Rack::Request.new(env).url, response.body)
+  end)
+```
 
 ## Customization
 
@@ -50,7 +75,38 @@ config.middleware.use Rack::Prerender, blacklist: '^/search'
 config.middleware.use Rack::Prerender, blacklist: ['/search', '/users/.*/profile']
 ```
 
-### Using your own prerender service
+### before_render
+
+This method is intended to be used for caching, but could be used to save analytics or anything else you need to do for each crawler request. If you return a string from before_render, the middleware will server that to the crawler instead of making a request to the prerender service.
+```ruby
+config.middleware.use Rack::Prerender,
+	before_render: (Proc.new do |env|
+		# do whatever you need to do.
+	end)
+```
+
+### after_render
+
+This method is intended to be used for caching, but could be used to save analytics or anything else you need to do for each crawler request. This method is a noop and is called after the prerender service returns HTML.
+```ruby
+config.middleware.use Rack::Prerender,
+	after_render: (Proc.new do |env, response|
+		# do whatever you need to do.
+	end)
+```
+
+### build_rack_response_from_prerender
+
+This method is intended to be used to modify the response before it is sent to the crawler. Use this method to add/remove response headers, or do anything else before the request is sent.
+```ruby
+config.middleware.use Rack::Prerender,
+	build_rack_response_from_prerender: (Proc.new do |response, prerender_response|
+		# response is already populated with the prerender status code, html, and headers
+		# prerender_response is the response that came back from the prerender service
+	end)
+```
+
+## Using your own prerender service
 
 If you've deployed the prerender service on your own, set the `PRERENDER_SERVICE_URL` environment variable so that this package points there instead. Otherwise, it will default to the service already deployed at `http://prerender.herokuapp.com`
 
