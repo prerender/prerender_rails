@@ -95,6 +95,17 @@ config.middleware.use Rack::Prerender,
 	end)
 ```
 
+### build_rack_response_from_prerender
+
+This method is intended to be used to modify the response before it is sent to the crawler. Use this method to add/remove response headers, or do anything else before the request is sent.
+```ruby
+config.middleware.use Rack::Prerender,
+	build_rack_response_from_prerender: (Proc.new do |response, prerender_response|
+		# response is already populated with the prerender status code, html, and headers
+		# prerender_response is the response that came back from the prerender service
+	end)
+```
+
 ## Using your own prerender service
 
 If you've deployed the prerender service on your own, set the `PRERENDER_SERVICE_URL` environment variable so that this package points there instead. Otherwise, it will default to the service already deployed at `http://prerender.herokuapp.com`
