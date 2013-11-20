@@ -117,12 +117,21 @@ describe Rack::Prerender do
   end
 
 
-  it "should return a prerendered response returned from before_render" do
+  it "should return a prerendered response if a string is returned from before_render" do
     request = Rack::MockRequest.env_for "/", "HTTP_USER_AGENT" => bot
-    stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
-    response = Rack::Prerender.new(@app, before_render: Proc.new do |env| return '<html>cached</html>' end).call(request)
+    response = Rack::Prerender.new(@app, before_render: Proc.new do |env| '<html>cached</html>' end).call(request)
 
     assert_equal ["<html>cached</html>"], response[2].body
+  end
+
+
+  it "should return a prerendered response if a response is returned from before_render" do
+    request = Rack::MockRequest.env_for "/", "HTTP_USER_AGENT" => bot
+    response = Rack::Prerender.new(@app, before_render: Proc.new do |env| Rack::Response.new('<html>cached2</html>', 200, { 'test' => 'test2Header'}) end).call(request)
+
+    assert_equal ["<html>cached2</html>"], response[2].body
+    assert_equal response[2].status, 200
+    assert_equal( { 'test' => 'test2Header', "Content-Length"=>"20"}, response[2].headers )
   end
 
  

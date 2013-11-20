@@ -68,7 +68,7 @@ module Rack
 
         cached_response = before_render(env)
 
-        if cached_response && cached_response.is_a?(Rack::Response)
+        if cached_response
           return cached_response.finish
         end
 
@@ -170,6 +170,8 @@ module Rack
       
       if cached_render && cached_render.is_a?(String)
         Rack::Response.new(cached_render, 200, [])
+      elsif cached_render && cached_render.is_a?(Rack::Response)
+        cached_render
       else
         nil
       end
