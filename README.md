@@ -77,7 +77,7 @@ config.middleware.use Rack::Prerender, blacklist: ['/search', '/users/.*/profile
 
 ### before_render
 
-This method is intended to be used for caching, but could be used to save analytics or anything else you need to do for each crawler request. If you return a string from before_render, the middleware will server that to the crawler instead of making a request to the prerender service.
+This method is intended to be used for caching, but could be used to save analytics or anything else you need to do for each crawler request. If you return a string from before_render, the middleware will serve that to the crawler instead of making a request to the prerender service.
 ```ruby
 config.middleware.use Rack::Prerender,
 	before_render: (Proc.new do |env|
