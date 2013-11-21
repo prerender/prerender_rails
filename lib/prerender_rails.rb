@@ -3,13 +3,13 @@ module Rack
     require 'net/http'
 
     def initialize(app, options={})
-      # googlebot, yahoo, and bingbot are in this list even though
-      # we support _escaped_fragment_ to ensure it works for people
-      # who might not use the _escaped_fragment_ protocol
+      # googlebot, yahoo, and bingbot are not in this list because
+      # we support _escaped_fragment_ and want to ensure people aren't
+      # penalized for cloaking.
       @crawler_user_agents = [
-        'googlebot',
-        'yahoo',
-        'bingbot',
+        # 'googlebot',
+        # 'yahoo',
+        # 'bingbot',
         'baiduspider',
         'facebookexternalhit',
         'twitterbot'
