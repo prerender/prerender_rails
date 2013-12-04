@@ -21,6 +21,12 @@ And in `config/environment/production.rb`, add this line:
 	config.middleware.use Rack::Prerender
 ```
 
+or if you have an account on [prerender.io](http://prerender.io) and want to use your token:
+
+```ruby
+	config.middleware.use Rack::Prerender, prerender_token: 'YOUR_TOKEN'
+```
+
 ## How it works
 1. Check to make sure we should show a prerendered page
 	1. Check if the request is from a crawler (`_escaped_fragment_` or agent string)
