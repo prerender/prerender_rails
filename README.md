@@ -34,14 +34,14 @@ or if you have an account on [prerender.io](http://prerender.io) and want to use
 
 If your URLs use a hash-bang:
 
-	If you want to see `http://localhost:3000/#!/profiles/1234`
-	Then go to `http://localhost:3000/?_escaped_fragment_=/profiles/1234`
+	If you want to see `http://localhost:5000/#!/profiles/1234`
+	Then go to `http://localhost:5000/?_escaped_fragment_=/profiles/1234`
 
 If your URLs use push-state:
 
-	If you want to see `http://localhost:3000/profiles/1234`
-	Then go to `http://localhost:3000/profiles/1234?_escaped_fragment_=`
-	
+	If you want to see `http://localhost:5000/profiles/1234`
+	Then go to `http://localhost:5000/profiles/1234?_escaped_fragment_=`
+
 ## How it works
 1. The middleware checks to make sure we should show a prerendered page
 	1. The middleware checks if the request is from a crawler (`_escaped_fragment_` or agent string)
