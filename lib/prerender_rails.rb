@@ -7,9 +7,9 @@ module Rack
       # we support _escaped_fragment_ and want to ensure people aren't
       # penalized for cloaking.
       @crawler_user_agents = [
-        # 'googlebot',
-        # 'yahoo',
-        # 'bingbot',
+        'googlebot',
+        'yahoo',
+        'bingbot',
         'baiduspider',
         'facebookexternalhit',
         'twitterbot'
@@ -93,6 +93,7 @@ module Rack
       return false if env['REQUEST_METHOD'] != 'GET'
 
       request = Rack::Request.new(env)
+
 
       # if it is requesting with an _escaped_fragment_
       return true if Rack::Utils.parse_query(request.query_string).has_key?('_escaped_fragment_')
