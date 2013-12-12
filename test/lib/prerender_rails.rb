@@ -139,7 +139,7 @@ describe Rack::Prerender do
     it "should build the correct api url with the default url" do
       request = Rack::MockRequest.env_for "https://google.com/search?q=javascript"
       ENV['PRERENDER_SERVICE_URL'] = nil
-      assert_equal 'http://prerender.herokuapp.com/https://google.com/search?q=javascript', @prerender.build_api_url(request)
+      assert_equal 'http://service.prerender.io/https://google.com/search?q=javascript', @prerender.build_api_url(request)
     end
 
 
@@ -162,7 +162,7 @@ describe Rack::Prerender do
     it "should build the correct api url for the Cloudflare Flexible SSL support" do
       request = Rack::MockRequest.env_for "http://google.com/search?q=javascript", { 'CF-VISITOR' => '"scheme":"https"'}
       ENV['PRERENDER_SERVICE_URL'] = nil
-      assert_equal 'http://prerender.herokuapp.com/https://google.com/search?q=javascript', @prerender.build_api_url(request)
+      assert_equal 'http://service.prerender.io/https://google.com/search?q=javascript', @prerender.build_api_url(request)
     end
   end
 
