@@ -94,6 +94,7 @@ module Rack
 
       request = Rack::Request.new(env)
 
+      # if it is requesting with an _escaped_fragment_
       return true if Rack::Utils.parse_query(request.query_string).has_key?('_escaped_fragment_')
 
       #if it is not a bot...dont prerender
