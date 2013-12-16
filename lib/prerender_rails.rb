@@ -95,7 +95,6 @@ module Rack
 
       request = Rack::Request.new(env)
 
-
       # if it is requesting with an _escaped_fragment_
       return true if Rack::Utils.parse_query(request.query_string).has_key?('_escaped_fragment_')
 
@@ -134,7 +133,9 @@ module Rack
         headers['X-Prerender-Token'] = @options[:prerender_token] if @options[:prerender_token]
         req = Net::HTTP::Get.new(url.request_uri, headers)
         response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
-      rescue
+      rescue Exception => e
+        Rails.logger.info("PrerenderRails: Error in get_prerendered_page_response function: ")
+        Rails.logger.info(e.messages)
         nil
       end
     end
