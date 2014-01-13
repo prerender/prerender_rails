@@ -135,7 +135,7 @@ module Rack
         response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
       rescue Exception => e
         Rails.logger.info("PrerenderRails: Error in get_prerendered_page_response function: ")
-        Rails.logger.info(e.messages)
+        Rails.logger.info(e.message)
         nil
       end
     end
