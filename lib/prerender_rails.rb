@@ -90,16 +90,18 @@ module Rack
 
     def should_show_prerendered_page(env)
       user_agent = env['HTTP_USER_AGENT']
+      is_requesting_prerendered_page = false
+
       return false if !user_agent
       return false if env['REQUEST_METHOD'] != 'GET'
 
       request = Rack::Request.new(env)
 
       # if it is requesting with an _escaped_fragment_
-      return true if Rack::Utils.parse_query(request.query_string).has_key?('_escaped_fragment_')
+      is_requesting_prerendered_page = true if Rack::Utils.parse_query(request.query_string).has_key?('_escaped_fragment_')
 
-      #if it is not a bot...dont prerender
-      return false if @crawler_user_agents.all? { |crawler_user_agent| !user_agent.downcase.include?(crawler_user_agent.downcase) }
+      #if it is a bot...show prerendered page
+      is_requesting_prerendered_page = true if @crawler_user_agents.any? { |crawler_user_agent| user_agent.downcase.include?(crawler_user_agent.downcase) }
 
       #if it is a bot and is requesting a resource...dont prerender
       return false if @extensions_to_ignore.any? { |extension| request.path.include? extension }
@@ -121,7 +123,7 @@ module Rack
         return false
       end 
 
-      return true
+      return is_requesting_prerendered_page
     end
 
 

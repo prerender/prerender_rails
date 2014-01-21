@@ -67,7 +67,7 @@ describe Rack::Prerender do
 
 
   it "should continue to app routes if the url is not part of the regex specific whitelist" do
-    request = Rack::MockRequest.env_for "/saved/search/blah", "HTTP_USER_AGENT" => bot
+    request = Rack::MockRequest.env_for "/saved/search/blah?_escaped_fragment_=", "HTTP_USER_AGENT" => bot
     response = Rack::Prerender.new(@app, whitelist: ['^/search', '/help']).call(request)
 
     assert_equal "", response[2]
@@ -75,7 +75,7 @@ describe Rack::Prerender do
 
 
   it "should return a prerendered response if the url is part of the regex specific whitelist" do
-    request = Rack::MockRequest.env_for "/search/things/123/page", "HTTP_USER_AGENT" => bot
+    request = Rack::MockRequest.env_for "/search/things/123/page?_escaped_fragment_=", "HTTP_USER_AGENT" => bot
     stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
     response = Rack::Prerender.new(@app, whitelist: ['^/search.*page', '/help']).call(request)
 
@@ -139,7 +139,7 @@ describe Rack::Prerender do
     it "should build the correct api url with the default url" do
       request = Rack::MockRequest.env_for "https://google.com/search?q=javascript"
       ENV['PRERENDER_SERVICE_URL'] = nil
-      assert_equal 'http://prerender.herokuapp.com/https://google.com/search?q=javascript', @prerender.build_api_url(request)
+      assert_equal 'http://service.prerender.io/https://google.com/search?q=javascript', @prerender.build_api_url(request)
     end
 
 
@@ -162,7 +162,7 @@ describe Rack::Prerender do
     it "should build the correct api url for the Cloudflare Flexible SSL support" do
       request = Rack::MockRequest.env_for "http://google.com/search?q=javascript", { 'CF-VISITOR' => '"scheme":"https"'}
       ENV['PRERENDER_SERVICE_URL'] = nil
-      assert_equal 'http://prerender.herokuapp.com/https://google.com/search?q=javascript', @prerender.build_api_url(request)
+      assert_equal 'http://service.prerender.io/https://google.com/search?q=javascript', @prerender.build_api_url(request)
     end
   end
 
