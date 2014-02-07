@@ -12,7 +12,9 @@ module Rack
         # 'bingbot',
         'baiduspider',
         'facebookexternalhit',
-        'twitterbot'
+        'twitterbot',
+        'linkedinbot',
+        'embedly'
       ]
 
       @extensions_to_ignore = [
