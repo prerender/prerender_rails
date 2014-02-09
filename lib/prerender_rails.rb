@@ -13,6 +13,7 @@ module Rack
         'baiduspider',
         'facebookexternalhit',
         'twitterbot',
+        'rogerbot',
         'linkedinbot',
         'embedly'
       ]
