@@ -3,13 +3,14 @@ module Rack
     require 'net/http'
 
     def initialize(app, options={})
-      # googlebot, yahoo, and bingbot are not in this list because
-      # we support _escaped_fragment_ and want to ensure people aren't
-      # penalized for cloaking.
+
+      # USED TO KEEP TRACK OF THE CURRENT PRERENDER SERVICE USED
+      @current_prerender_service_index = 0
+
       @crawler_user_agents = [
-        # 'googlebot',
-        # 'yahoo',
-        # 'bingbot',
+        'googlebot',
+        'yahoo',
+        'bingbot',
         'baiduspider',
         'facebookexternalhit',
         'twitterbot',
@@ -99,6 +100,7 @@ module Rack
 
       request = Rack::Request.new(env)
 
+      # if it is requesting with an _escaped_fragment_
       is_requesting_prerendered_page = true if Rack::Utils.parse_query(request.query_string).has_key?('_escaped_fragment_')
 
       #if it is a bot...show prerendered page
@@ -136,7 +138,9 @@ module Rack
         headers['X-Prerender-Token'] = @options[:prerender_token] if @options[:prerender_token]
         req = Net::HTTP::Get.new(url.request_uri, headers)
         response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
-      rescue
+      rescue Exception => e
+        Rails.logger.info("PrerenderRails: Error in get_prerendered_page_response function: ")
+        Rails.logger.info(e.message)
         nil
       end
     end
@@ -162,8 +166,35 @@ module Rack
     end
 
 
+    # THIS METHOD IS USED TO RETRIEVE THE URL OF THE PRERENDER SERVICE
+    # Default is: http://prerender.herokuapp.com/
+    # You can set it in your app: 
+    #   config.middleware.use Rack::Prerender, :prerender_service_url => 'http://myserviceurlhere:port' # in your environment.rb file
+    # or in your shell: 
+    #   export PRERENDER_SERVICE_URL=http://myserviceurlhere:port # in your environment variables
     def get_prerender_service_url
-      @options[:prerender_service_url] || ENV['PRERENDER_SERVICE_URL'] || 'http://service.prerender.io/'
+
+      # assuming that the url is a string
+      url = @options[:prerender_service_url] || ENV['PRERENDER_SERVICE_URL'] || 'http://prerender.herokuapp.com/'
+      
+      # maybe it is an array. is it?
+      if url.kind_of? Array
+
+        # get the total length of the array
+        length = url.length
+
+        # check that the saved index is lower than the array itself. the set it to 0 if it is.
+        @current_prerender_service_index = 0 if @current_prerender_service_index >= length
+
+        # get the url is now taken from the array and right into the returned variable
+        url = url[@current_prerender_service_index]
+
+        # increment the index for the next time you will call this method
+        @current_prerender_service_index += 1
+      end
+
+      url
+
     end
 
 
