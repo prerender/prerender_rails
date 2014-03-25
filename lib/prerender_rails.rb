@@ -17,7 +17,8 @@ module Rack
         'linkedinbot',
         'embedly',
         'bufferbot',
-        'quora link preview'
+        'quora link preview',
+        'showyoubot'
       ]
 
       @extensions_to_ignore = [
