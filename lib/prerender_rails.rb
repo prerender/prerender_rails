@@ -18,7 +18,8 @@ module Rack
         'embedly',
         'bufferbot',
         'quora link preview',
-        'showyoubot'
+        'showyoubot',
+        'outbrain'
       ]
 
       @extensions_to_ignore = [
@@ -134,11 +135,20 @@ module Rack
     def get_prerendered_page_response(env)
       begin
         url = URI.parse(build_api_url(env))
-        headers = { 'User-Agent' => env['HTTP_USER_AGENT'] }
+        headers = {
+          'User-Agent' => env['HTTP_USER_AGENT'],
+          'Accept-Encoding' => 'gzip'
+        }
         headers['X-Prerender-Token'] = ENV['PRERENDER_TOKEN'] if ENV['PRERENDER_TOKEN']
         headers['X-Prerender-Token'] = @options[:prerender_token] if @options[:prerender_token]
         req = Net::HTTP::Get.new(url.request_uri, headers)
         response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
+        if response['Content-Encoding'] == 'gzip'
+          response.body = ActiveSupport::Gzip.decompress(response.body)
+          response['Content-Length'] = response.body.length
+          response['Content-Encoding'] = ''
+        end
+        response
       rescue
         nil
       end
