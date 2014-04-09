@@ -146,7 +146,7 @@ module Rack
         if response['Content-Encoding'] == 'gzip'
           response.body = ActiveSupport::Gzip.decompress(response.body)
           response['Content-Length'] = response.body.length
-          response['Content-Encoding'] = ''
+          response.delete('Content-Encoding')
         end
         response
       rescue
