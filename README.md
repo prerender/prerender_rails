@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/prerender/prerender_rails.png?label=ready&title=Ready)](https://waffle.io/prerender/prerender_rails)
 Prerender Rails [![Build Status](https://travis-ci.org/prerender/prerender_rails.png)](https://travis-ci.org/prerender/prerender_rails) [![Gem Version](https://badge.fury.io/rb/prerender_rails.png)](http://badge.fury.io/rb/prerender_rails)
 =========================== 
 
