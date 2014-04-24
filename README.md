@@ -1,5 +1,4 @@
-[![Stories in Ready](https://badge.waffle.io/prerender/prerender_rails.png?label=ready&title=Ready)](https://waffle.io/prerender/prerender_rails)
-Prerender Rails [![Build Status](https://travis-ci.org/prerender/prerender_rails.png)](https://travis-ci.org/prerender/prerender_rails) [![Gem Version](https://badge.fury.io/rb/prerender_rails.png)](http://badge.fury.io/rb/prerender_rails)
+Prerender Rails [![Stories in Ready](https://badge.waffle.io/prerender/prerender_rails.png?label=ready&title=Ready)](https://waffle.io/prerender/prerender_rails) [![Build Status](https://travis-ci.org/prerender/prerender_rails.png)](https://travis-ci.org/prerender/prerender_rails) [![Gem Version](https://badge.fury.io/rb/prerender_rails.png)](http://badge.fury.io/rb/prerender_rails)
 =========================== 
 
 Google, Facebook, Twitter, Yahoo, and Bing are constantly trying to view your website... but they don't execute javascript. That's why we built Prerender. Prerender is perfect for AngularJS SEO, BackboneJS SEO, EmberJS SEO, and any other javascript framework.
