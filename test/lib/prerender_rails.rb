@@ -1,5 +1,5 @@
 require_relative '../test_helper'
- 
+
 describe Rack::Prerender do
 
   bot = 'Baiduspider+(+http://www.baidu.com/search/spider.htm)'
@@ -134,7 +134,7 @@ describe Rack::Prerender do
     assert_equal( { 'test' => 'test2Header', "Content-Length"=>"20"}, response[2].headers )
   end
 
- 
+
   describe '#buildApiUrl' do
     it "should build the correct api url with the default url" do
       request = Rack::MockRequest.env_for "https://google.com/search?q=javascript"
@@ -167,8 +167,16 @@ describe Rack::Prerender do
 
 
     # Check X-Forwarded-Proto because Heroku SSL Support terminates at the load balancer
-    it "should build the correct api url for the Heroku SSL Addon support" do
+    it "should build the correct api url for the Heroku SSL Addon support with single value" do
       request = Rack::MockRequest.env_for "http://google.com/search?q=javascript", { 'X-FORWARDED-PROTO' => 'https'}
+      ENV['PRERENDER_SERVICE_URL'] = nil
+      assert_equal 'http://service.prerender.io/https://google.com/search?q=javascript', @prerender.build_api_url(request)
+    end
+
+
+    # Check X-Forwarded-Proto because Heroku SSL Support terminates at the load balancer
+    it "should build the correct api url for the Heroku SSL Addon support with double value" do
+      request = Rack::MockRequest.env_for "http://google.com/search?q=javascript", { 'X-FORWARDED-PROTO' => 'https,http'}
       ENV['PRERENDER_SERVICE_URL'] = nil
       assert_equal 'http://service.prerender.io/https://google.com/search?q=javascript', @prerender.build_api_url(request)
     end

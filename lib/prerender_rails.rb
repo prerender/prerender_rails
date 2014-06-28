@@ -19,7 +19,8 @@ module Rack
         'bufferbot',
         'quora link preview',
         'showyoubot',
-        'outbrain'
+        'outbrain',
+        'pinterest'
       ]
 
       @extensions_to_ignore = [
@@ -90,12 +91,13 @@ module Rack
         end
       end
 
-      @app.call(env)  
+      @app.call(env)
     end
 
 
     def should_show_prerendered_page(env)
       user_agent = env['HTTP_USER_AGENT']
+      buffer_agent = env['X-BUFFERBOT']
       is_requesting_prerendered_page = false
 
       return false if !user_agent
@@ -107,6 +109,9 @@ module Rack
 
       #if it is a bot...show prerendered page
       is_requesting_prerendered_page = true if @crawler_user_agents.any? { |crawler_user_agent| user_agent.downcase.include?(crawler_user_agent.downcase) }
+
+      #if it is BufferBot...show prerendered page
+      is_requesting_prerendered_page = true if buffer_agent
 
       #if it is a bot and is requesting a resource...dont prerender
       return false if @extensions_to_ignore.any? { |extension| request.path.include? extension }
@@ -126,7 +131,7 @@ module Rack
           blacklistedUrl || blacklistedReferer
         }
         return false
-      end 
+      end
 
       return is_requesting_prerendered_page
     end
@@ -164,8 +169,8 @@ module Rack
       end
 
       if env["X-FORWARDED-PROTO"]
-        new_env["HTTPS"] = true and new_env["rack.url_scheme"] = "https" and new_env["SERVER_PORT"] = 443 if env["X-FORWARDED-PROTO"] == "https"
-        new_env["HTTPS"] = false and new_env["rack.url_scheme"] = "http" and new_env["SERVER_PORT"] = 80 if env["X-FORWARDED-PROTO"] == "http"
+        new_env["HTTPS"] = true and new_env["rack.url_scheme"] = "https" and new_env["SERVER_PORT"] = 443 if env["X-FORWARDED-PROTO"].split(',')[0] == "https"
+        new_env["HTTPS"] = false and new_env["rack.url_scheme"] = "http" and new_env["SERVER_PORT"] = 80 if env["X-FORWARDED-PROTO"].split(',')[0] == "http"
       end
 
       url = Rack::Request.new(new_env).url
@@ -193,7 +198,7 @@ module Rack
       return nil unless @options[:before_render]
 
       cached_render = @options[:before_render].call(env)
-      
+
       if cached_render && cached_render.is_a?(String)
         Rack::Response.new(cached_render, 200, [])
       elsif cached_render && cached_render.is_a?(Rack::Response)
