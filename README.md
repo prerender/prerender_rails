@@ -1,5 +1,5 @@
 Prerender Rails [![Stories in Ready](https://badge.waffle.io/prerender/prerender_rails.png?label=ready&title=Ready)](https://waffle.io/prerender/prerender_rails) [![Build Status](https://travis-ci.org/prerender/prerender_rails.png)](https://travis-ci.org/prerender/prerender_rails) [![Gem Version](https://badge.fury.io/rb/prerender_rails.png)](http://badge.fury.io/rb/prerender_rails)
-=========================== 
+===========================
 
 Google, Facebook, Twitter, Yahoo, and Bing are constantly trying to view your website... but they don't execute javascript. That's why we built Prerender. Prerender is perfect for AngularJS SEO, BackboneJS SEO, EmberJS SEO, and any other javascript framework.
 
@@ -102,6 +102,13 @@ config.middleware.use Rack::Prerender,
 		# response is already populated with the prerender status code, html, and headers
 		# prerender_response is the response that came back from the prerender service
 	end)
+```
+
+### protocol
+
+Option to hard-set the protocol for Prerender accessing your site instead of the middleware figuring out the protocol based on the request.
+```ruby
+config.middleware.use Rack::Prerender, protocol: 'https'
 ```
 
 ## Caching

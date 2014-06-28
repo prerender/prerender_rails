@@ -180,6 +180,13 @@ describe Rack::Prerender do
       ENV['PRERENDER_SERVICE_URL'] = nil
       assert_equal 'http://service.prerender.io/https://google.com/search?q=javascript', @prerender.build_api_url(request)
     end
+
+    it "should build the correct api url for the protocol option" do
+      @prerender = Rack::Prerender.new(@app, protocol: 'https')
+      request = Rack::MockRequest.env_for "http://google.com/search?q=javascript"
+      ENV['PRERENDER_SERVICE_URL'] = nil
+      assert_equal 'http://service.prerender.io/https://google.com/search?q=javascript', @prerender.build_api_url(request)
+    end
   end
 
 end
