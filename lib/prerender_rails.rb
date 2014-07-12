@@ -20,7 +20,8 @@ module Rack
         'quora link preview',
         'showyoubot',
         'outbrain',
-        'pinterest'
+        'pinterest',
+        'developers.google.com/+/web/snippet'
       ]
 
       @extensions_to_ignore = [
