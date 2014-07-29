@@ -148,6 +148,7 @@ module Rack
         headers['X-Prerender-Token'] = ENV['PRERENDER_TOKEN'] if ENV['PRERENDER_TOKEN']
         headers['X-Prerender-Token'] = @options[:prerender_token] if @options[:prerender_token]
         req = Net::HTTP::Get.new(url.request_uri, headers)
+        req.basic_auth(ENV['PRERENDER_USERNAME'], ENV['PRERENDER_PASSWORD']) if @options[:basic_auth]
         response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
         if response['Content-Encoding'] == 'gzip'
           response.body = ActiveSupport::Gzip.decompress(response.body)
@@ -198,7 +199,6 @@ module Rack
 
       response
     end
-
 
     def before_render(env)
       return nil unless @options[:before_render]
