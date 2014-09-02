@@ -1,6 +1,7 @@
 module Rack
   class Prerender
     require 'net/http'
+    require 'active_support'
 
     def initialize(app, options={})
       # googlebot, yahoo, and bingbot are not in this list because
