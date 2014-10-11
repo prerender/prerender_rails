@@ -22,7 +22,8 @@ module Rack
         'showyoubot',
         'outbrain',
         'pinterest',
-        'developers.google.com/+/web/snippet'
+        'developers.google.com/+/web/snippet',
+        'slackbot'
       ]
 
       @extensions_to_ignore = [
