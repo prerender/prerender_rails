@@ -146,7 +146,7 @@ Or on heroku:
 As an alternative, you can pass `prerender_service_url` in the options object during initialization of the middleware
 
 ``` ruby
-config.middleware.use Rack::Prerender, prerender_service_url: '&lt;new url>'
+config.middleware.use Rack::Prerender, prerender_service_url: '<new url>'
 ```
 
 ## License
