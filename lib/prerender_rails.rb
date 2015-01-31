@@ -23,7 +23,9 @@ module Rack
         'outbrain',
         'pinterest',
         'developers.google.com/+/web/snippet',
-        'slackbot'
+        'slackbot',
+        'vkShare',
+        'W3C_Validator'
       ]
 
       @extensions_to_ignore = [
