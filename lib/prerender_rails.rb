@@ -153,7 +153,9 @@ module Rack
         headers['X-Prerender-Token'] = @options[:prerender_token] if @options[:prerender_token]
         req = Net::HTTP::Get.new(url.request_uri, headers)
         req.basic_auth(ENV['PRERENDER_USERNAME'], ENV['PRERENDER_PASSWORD']) if @options[:basic_auth]
-        response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
+        http = Net::HTTP.new(url.host, url.port)
+        http.use_ssl = true if url.scheme == 'https'
+        response = http.request(req)
         if response['Content-Encoding'] == 'gzip'
           response.body = ActiveSupport::Gzip.decompress(response.body)
           response['Content-Length'] = response.body.length
