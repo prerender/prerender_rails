@@ -25,7 +25,9 @@ module Rack
         'developers.google.com/+/web/snippet',
         'slackbot',
         'vkShare',
-        'W3C_Validator'
+        'W3C_Validator',
+        'redditbot',
+        'Applebot'
       ]
 
       @extensions_to_ignore = [
