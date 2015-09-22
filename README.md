@@ -32,6 +32,8 @@ or if you have an account on [prerender.io](http://prerender.io) and want to use
 
 ## Testing
 
+When testing make sure you're not using a single threaded application server like default WEBrick one, use Puma or Unicorn.
+
 If your URLs use a hash-bang:
 
 	If you want to see `http://localhost:5000/#!/profiles/1234`
