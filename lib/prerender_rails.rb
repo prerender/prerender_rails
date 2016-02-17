@@ -212,7 +212,7 @@ module Rack
       cached_render = @options[:before_render].call(env)
 
       if cached_render && cached_render.is_a?(String)
-        Rack::Response.new(cached_render, 200, [])
+        Rack::Response.new(cached_render, 200, { 'Content-Type' => 'text/html; charset=utf-8' })
       elsif cached_render && cached_render.is_a?(Rack::Response)
         cached_render
       else
