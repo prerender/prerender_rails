@@ -90,6 +90,12 @@ describe Rack::Prerender do
     assert_equal "", response[2]
   end
 
+  it "should continue to app routes if the hashbang url is part of the regex specific blacklist" do
+    request = Rack::MockRequest.env_for "?_escaped_fragment_=/search/things/123/page", "HTTP_USER_AGENT" => bot
+    response = Rack::Prerender.new(@app, blacklist: ['/search', '/help']).call(request)
+
+    assert_equal "", response[2]
+  end
 
   it "should return a prerendered response if the url is not part of the regex specific blacklist" do
     request = Rack::MockRequest.env_for "/profile/search/blah", "HTTP_USER_AGENT" => bot

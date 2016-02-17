@@ -121,10 +121,10 @@ module Rack
       is_requesting_prerendered_page = true if buffer_agent
 
       #if it is a bot and is requesting a resource...dont prerender
-      return false if @extensions_to_ignore.any? { |extension| request.path.include? extension }
+      return false if @extensions_to_ignore.any? { |extension| request.fullpath.include? extension }
 
       #if it is a bot and not requesting a resource and is not whitelisted...dont prerender
-      return false if @options[:whitelist].is_a?(Array) && @options[:whitelist].all? { |whitelisted| !Regexp.new(whitelisted).match(request.path) }
+      return false if @options[:whitelist].is_a?(Array) && @options[:whitelist].all? { |whitelisted| !Regexp.new(whitelisted).match(request.fullpath) }
 
       #if it is a bot and not requesting a resource and is not blacklisted(url or referer)...dont prerender
       if @options[:blacklist].is_a?(Array) && @options[:blacklist].any? { |blacklisted|
@@ -132,7 +132,7 @@ module Rack
           blacklistedReferer = false
           regex = Regexp.new(blacklisted)
 
-          blacklistedUrl = !!regex.match(request.path)
+          blacklistedUrl = !!regex.match(request.fullpath)
           blacklistedReferer = !!regex.match(request.referer) if request.referer
 
           blacklistedUrl || blacklistedReferer
