@@ -23,6 +23,7 @@ module Rack
         'outbrain',
         'pinterest',
         'developers.google.com/+/web/snippet',
+        'www.google.com/webmasters/tools/richsnippets',
         'slackbot',
         'vkShare',
         'W3C_Validator',
