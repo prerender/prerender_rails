@@ -21,7 +21,7 @@ module Rack
         'quora link preview',
         'showyoubot',
         'outbrain',
-        'pinterest',
+        'pinterest/0.',
         'developers.google.com/+/web/snippet',
         'www.google.com/webmasters/tools/richsnippets',
         'slackbot',
@@ -29,6 +29,14 @@ module Rack
         'W3C_Validator',
         'redditbot',
         'Applebot',
+        'WhatsApp',
+        'flipboard',
+        'tumblr',
+        'bitlybot',
+        'SkypeUriPreview',
+        'nuzzel',
+        'Discordbot',
+        'Google Page Speed',
         'Qwantify'
       ]
 
