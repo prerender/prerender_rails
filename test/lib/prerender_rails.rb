@@ -74,6 +74,17 @@ describe Rack::Prerender do
   end
 
 
+  it "should set use_ssl to true for https prerender_service_url" do
+		@prerender = Rack::Prerender.new(@app, prerender_service_url: 'https://service.prerender.io/')
+
+		request = Rack::MockRequest.env_for "/search/things/123/page?_escaped_fragment_=", "HTTP_USER_AGENT" => bot
+		stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
+		response = @prerender.call(request)
+
+		assert_equal ["<html></html>"], response[2].body
+  end
+
+
   it "should return a prerendered response if the url is part of the regex specific whitelist" do
     request = Rack::MockRequest.env_for "/search/things/123/page?_escaped_fragment_=", "HTTP_USER_AGENT" => bot
     stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
@@ -161,6 +172,13 @@ describe Rack::Prerender do
       @prerender = Rack::Prerender.new(@app, prerender_service_url: 'http://prerenderurl.com')
       request = Rack::MockRequest.env_for "https://google.com/search?q=javascript"
       assert_equal 'http://prerenderurl.com/https://google.com/search?q=javascript', @prerender.build_api_url(request)
+    end
+
+
+    it "should build the correct https api url with an initialization variable url" do
+      @prerender = Rack::Prerender.new(@app, prerender_service_url: 'https://prerenderurl.com')
+      request = Rack::MockRequest.env_for "https://google.com/search?q=javascript"
+      assert_equal 'https://prerenderurl.com/https://google.com/search?q=javascript', @prerender.build_api_url(request)
     end
 
 
