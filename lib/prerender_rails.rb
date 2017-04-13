@@ -128,7 +128,7 @@ module Rack
       #if it is a bot and not requesting a resource and is not whitelisted...dont prerender
       return false if @options[:whitelist].is_a?(Array) && @options[:whitelist].all? { |whitelisted| !Regexp.new(whitelisted).match(request.fullpath) }
 
-      #if it is a bot and not requesting a resource and is not blacklisted(url or referer)...dont prerender
+      #if it is a bot and not requesting a resource and is blacklisted(url or referer)...dont prerender
       if @options[:blacklist].is_a?(Array) && @options[:blacklist].any? { |blacklisted|
           blacklistedUrl = false
           blacklistedReferer = false
