@@ -115,6 +115,7 @@ module Rack
     def should_show_prerendered_page(env)
       user_agent = env['HTTP_USER_AGENT']
       buffer_agent = env['X-BUFFERBOT']
+      prerender_agent = env['X-PRERENDER']
       is_requesting_prerendered_page = false
 
       return false if !user_agent
@@ -129,6 +130,9 @@ module Rack
 
       #if it is BufferBot...show prerendered page
       is_requesting_prerendered_page = true if buffer_agent
+
+      #if it is Prerender...don't show prerendered page
+      is_requesting_prerendered_page = false if prerender_agent
 
       #if it is a bot and is requesting a resource...dont prerender
       return false if @extensions_to_ignore.any? { |extension| request.fullpath.include? extension }
