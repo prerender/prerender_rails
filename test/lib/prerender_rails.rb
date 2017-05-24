@@ -58,6 +58,14 @@ describe Rack::Prerender do
   end
 
 
+  it "should continue to app routes if contains X-Prerender header" do
+    request = Rack::MockRequest.env_for "/path?_escaped_fragment_=", "HTTP_USER_AGENT" => user, "HTTP_X_PRERENDER" => "1"
+    response = Rack::Prerender.new(@app).call(request)
+
+    assert_equal "", response[2]
+  end
+
+
   it "should continue to app routes if user is a bot, but the bot is requesting a resource file" do
     request = Rack::MockRequest.env_for "/main.js?anyQueryParam=true", "HTTP_USER_AGENT" => bot
     response = Rack::Prerender.new(@app).call(request)
@@ -75,13 +83,13 @@ describe Rack::Prerender do
 
 
   it "should set use_ssl to true for https prerender_service_url" do
-		@prerender = Rack::Prerender.new(@app, prerender_service_url: 'https://service.prerender.io/')
+    @prerender = Rack::Prerender.new(@app, prerender_service_url: 'https://service.prerender.io/')
 
-		request = Rack::MockRequest.env_for "/search/things/123/page?_escaped_fragment_=", "HTTP_USER_AGENT" => bot
-		stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
-		response = @prerender.call(request)
+    request = Rack::MockRequest.env_for "/search/things/123/page?_escaped_fragment_=", "HTTP_USER_AGENT" => bot
+    stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
+    response = @prerender.call(request)
 
-		assert_equal ["<html></html>"], response[2].body
+    assert_equal ["<html></html>"], response[2].body
   end
 
 

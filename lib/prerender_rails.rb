@@ -114,8 +114,8 @@ module Rack
 
     def should_show_prerendered_page(env)
       user_agent = env['HTTP_USER_AGENT']
-      buffer_agent = env['X-BUFFERBOT']
-      prerender_agent = env['X-PRERENDER']
+      buffer_agent = env['HTTP_X_BUFFERBOT']
+      prerender_agent = env['HTTP_X_PRERENDER']
       is_requesting_prerendered_page = false
 
       return false if !user_agent
