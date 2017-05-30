@@ -86,6 +86,7 @@ module Rack
       @options[:blacklist] = [@options[:blacklist]] if @options[:blacklist].is_a? String
       @extensions_to_ignore = @options[:extensions_to_ignore] if @options[:extensions_to_ignore]
       @crawler_user_agents = @options[:crawler_user_agents] if @options[:crawler_user_agents]
+      @smart_googlebot = @options[:smart_googlebot]
       @app = app
     end
 
@@ -120,6 +121,7 @@ module Rack
 
       return false if !user_agent
       return false if env['REQUEST_METHOD'] != 'GET'
+      return false if @smart_googlebot && user_agent.downcase == 'googlebot'
 
       request = Rack::Request.new(env)
 
