@@ -131,6 +131,8 @@ module Rack
       #if it is Prerender...don't show prerendered page
       is_requesting_prerendered_page = false if prerender_agent
 
+      return false unless is_requesting_prerendered_page
+
       #if it is a bot and is requesting a resource...dont prerender
       return false if @extensions_to_ignore.any? { |extension| request.fullpath.include? extension }
 
