@@ -117,19 +117,16 @@ module Rack
 
       return false if !user_agent
       return false if env['REQUEST_METHOD'] != 'GET'
+      #if it is Prerender...don't show prerendered page
+      return false if prerender_agent
 
       request = Rack::Request.new(env)
 
-      is_requesting_prerendered_page = true if Rack::Utils.parse_query(request.query_string).has_key?('_escaped_fragment_')
-
-      #if it is a bot...show prerendered page
-      is_requesting_prerendered_page = true if @crawler_user_agents.any? { |crawler_user_agent| user_agent.downcase.include?(crawler_user_agent.downcase) }
-
-      #if it is BufferBot...show prerendered page
-      is_requesting_prerendered_page = true if buffer_agent
-
-      #if it is Prerender...don't show prerendered page
-      is_requesting_prerendered_page = false if prerender_agent
+      # if it is BufferBot, escaped fragment or bot
+      # -> ready for prerender: check extensions, blacklist and whitelist
+      # else
+      # -> return false, will not be prerendered
+      return false unless buffer_agent || escaped_fragment?(request) || crawler?(user_agent)
 
       #if it is a bot and is requesting a resource...dont prerender
       return false if @extensions_to_ignore.any? { |extension| request.fullpath.include? extension }
@@ -151,7 +148,7 @@ module Rack
         return false
       end
 
-      return is_requesting_prerendered_page
+      true
     end
 
 
@@ -233,10 +230,23 @@ module Rack
       end
     end
 
-
     def after_render(env, response)
       return true unless @options[:after_render]
       @options[:after_render].call(env, response)
+    end
+
+    def escaped_fragment?(request)
+      Rack::Utils.parse_query(request.query_string).has_key?('_escaped_fragment_')
+    end
+
+    def crawler?(user_agent)
+      user_agent = user_agent.downcase
+
+      crawler_user_agents.any? { |crawler_user_agent| user_agent.include?(crawler_user_agent) }
+    end
+
+    def crawler_user_agents
+      @downcased_crawler_user_agents ||= @crawler_user_agents.map(&:downcase)
     end
   end
 end
