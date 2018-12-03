@@ -88,7 +88,7 @@ module Rack
 
 
     def call(env)
-      if should_show_prerendered_page(env)
+      if !skip_prerender?(env) && should_show_prerendered_page(env)
 
         cached_response = before_render(env)
 
@@ -237,6 +237,12 @@ module Rack
     def after_render(env, response)
       return true unless @options[:after_render]
       @options[:after_render].call(env, response)
+    end
+
+    def skip_prerender?(env)
+      return unless @options[:skip_prerender]
+
+      @options[:skip_prerender].call(env)
     end
   end
 end

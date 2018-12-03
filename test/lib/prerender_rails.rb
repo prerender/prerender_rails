@@ -221,4 +221,10 @@ describe Rack::Prerender do
     end
   end
 
+  it "should continue to app routes if skip_prerender" do
+    request = Rack::MockRequest.env_for "/path", "HTTP_USER_AGENT" => user
+    response = Rack::Prerender.new(@app, skip_prerender: -> (env) { true }).call(request)
+
+    assert_equal "", response[2]
+  end
 end
