@@ -34,7 +34,8 @@ module Rack
         'nuzzel',
         'Discordbot',
         'Google Page Speed',
-        'Qwantify'
+        'Qwantify',
+        'Chrome-Lighthouse'
       ]
 
       @extensions_to_ignore = [
