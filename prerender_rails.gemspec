@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = "prerender_rails"
-  spec.version       = "1.6.0"
+  spec.version       = "1.6.1"
   spec.authors       = ["Todd Hooper"]
   spec.email         = ["todd@prerender.io"]
   spec.description   = %q{Rails middleware to prerender your javascript heavy pages on the fly by a phantomjs service}
