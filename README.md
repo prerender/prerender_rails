@@ -1,14 +1,11 @@
-Prerender Rails [![Stories in Ready](https://badge.waffle.io/prerender/prerender_rails.png?label=ready&title=Ready)](https://waffle.io/prerender/prerender_rails) [![Build Status](https://travis-ci.org/prerender/prerender_rails.png)](https://travis-ci.org/prerender/prerender_rails) [![Gem Version](https://badge.fury.io/rb/prerender_rails.png)](http://badge.fury.io/rb/prerender_rails)
+Prerender Rails [![Build Status](https://travis-ci.org/prerender/prerender_rails.png)](https://travis-ci.org/prerender/prerender_rails) [![Gem Version](https://badge.fury.io/rb/prerender_rails.png)](http://badge.fury.io/rb/prerender_rails)
 ===========================
 
-Google, Facebook, Twitter, Yahoo, and Bing are constantly trying to view your website... but they don't execute javascript. That's why we built Prerender. Prerender is perfect for AngularJS SEO, BackboneJS SEO, EmberJS SEO, and any other javascript framework.
+Google, Facebook, Twitter, and Bing are constantly trying to view your website... but Google is the only crawler that executes a meaningful amount of JavaScript and Google even admits that they can execute JavaScript weeks after actually crawling. Prerender allows you to serve the full HTML of your website back to Google and other crawlers so that they don't have to execute any JavaScript. [Google recommends using Prerender.io](https://developers.google.com/search/docs/guides/dynamic-rendering) to prevent indexation issues on sites with large amounts of JavaScript.
 
-This middleware intercepts requests to your Rails website from crawlers, and then makes a call to the (external) Prerender Service to get the static HTML instead of the javascript for that page.
+Prerender is perfect for Angular SEO, React SEO, Vue SEO, and any other JavaScript framework.
 
-Prerender adheres to google's `_escaped_fragment_` proposal, which we recommend you use. It's easy:
-- Just add &lt;meta name="fragment" content="!"> to the &lt;head> of all of your pages
-- If you use hash urls (#), change them to the hash-bang (#!)
-- That's it! Perfect SEO on javascript pages.
+This middleware intercepts requests to your Node.js website from crawlers, and then makes a call to the (external) Prerender Service to get the static HTML instead of the JavaScript for that page. That HTML is then returned to the crawler.
 
 `Note` Make sure you have more than one webserver thread/process running because the prerender service will make a request to your server to render the HTML.
 
@@ -22,7 +19,7 @@ And in `config/environment/production.rb`, add this line:
 	config.middleware.use Rack::Prerender
 ```
 
-or if you have an account on [prerender.io](http://prerender.io) and want to use your token:
+or if you have an account on [prerender.io](https://prerender.io/) and want to use your token:
 
 ```ruby
 	config.middleware.use Rack::Prerender, prerender_token: 'YOUR_TOKEN'
@@ -32,21 +29,15 @@ or if you have an account on [prerender.io](http://prerender.io) and want to use
 
 ## Testing
 
-When testing make sure you're not using a single threaded application server like default WEBrick one, use Puma or Unicorn.
+When testing make sure you're not using a single threaded application server like default WEBrick one, use Puma or Unicorn to prevent a deadlock when the Prerender Service needs to render your HTML on the fly.
 
-If your URLs use a hash-bang:
+The best way to test the prerendered page is to [set the User Agent of your browser to Googlebot's user agent](https://developers.google.com/web/tools/chrome-devtools/device-mode/override-user-agent) and visit your URL directly. If you View Source on that URL, you should see the static HTML version of the page with the `<script>` tags removed from the page. If you still see `<script>` tags then that means the middleware isn't set up properly yet.
 
-	If you want to see `http://localhost:5000/#!/profiles/1234`
-	Then go to `http://localhost:5000/?_escaped_fragment_=/profiles/1234`
-
-If your URLs use push-state:
-
-	If you want to see `http://localhost:5000/profiles/1234`
-	Then go to `http://localhost:5000/profiles/1234?_escaped_fragment_=`
+`Note` If you're testing locally, you'll need to run the [prerender server](https://github.com/prerender/prerender) locally so that it has access to your server.
 
 ## How it works
 1. The middleware checks to make sure we should show a prerendered page
-	1. The middleware checks if the request is from a crawler (`_escaped_fragment_` or agent string)
+	1. The middleware checks if the request is from a crawler by checking the user agent string against a default list of crawler user agents
 	2. The middleware checks to make sure we aren't requesting a resource (js, css, etc...)
 	3. (optional) The middleware checks to make sure the url is in the whitelist
 	4. (optional) The middleware checks to make sure the url isn't in the blacklist
@@ -137,7 +128,7 @@ config.middleware.use Rack::Prerender,
 
 ## Using your own prerender service
 
-We host a Prerender server at [prerender.io](http://prerender.io) so that you can work on more important things, but if you've deployed the prerender service on your own... set the `PRERENDER_SERVICE_URL` environment variable so that this middleware points there instead. Otherwise, it will default to the service already deployed by [prerender.io](http://prerender.io).
+We host a Prerender server at [prerender.io](https://prerender.io/) so that you can work on more important things, but if you've deployed the prerender service on your own... set the `PRERENDER_SERVICE_URL` environment variable so that this middleware points there instead. Otherwise, it will default to the service already deployed by [prerender.io](https://prerender.io/).
 
 	$ export PRERENDER_SERVICE_URL=<new url>
 
