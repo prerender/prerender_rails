@@ -196,8 +196,10 @@ module Rack
       end
 
       if @options[:protocol]
-        new_env["HTTPS"] = true and new_env["rack.url_scheme"] = "https" and new_env["SERVER_PORT"] = 443 if @options[:protocol] == "https"
-        new_env["HTTPS"] = false and new_env["rack.url_scheme"] = "http" and new_env["SERVER_PORT"] = 80 if @options[:protocol] == "http"
+        new_env["HTTP_X_FORWARDED_PROTO"] = @options[:protocol]
+        new_env["rack.url_scheme"] = @options[:protocol]
+        new_env["HTTPS"] = 'on' and new_env["HTTP_X_FORWARDED_PORT"] = 443 and new_env["SERVER_PORT"] = 443 if @options[:protocol] == "https"
+        new_env["HTTPS"] = false and new_env["HTTP_X_FORWARDED_PORT"] = 80 and new_env["SERVER_PORT"] = 80 if @options[:protocol] == "http"
       end
 
       url = Rack::Request.new(new_env).url
