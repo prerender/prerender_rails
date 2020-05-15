@@ -119,6 +119,20 @@ module Rack
       return false if !user_agent
       return false if env['REQUEST_METHOD'] != 'GET'
 
+      # Prevent standard pages being accessed and cached via the api subdomain,
+      # as they end up filling up our prerender.io account.
+      #
+      # This is an issue because api. and the apex domain link to the same server,
+      # so you can make web requests via api.almanac.io, even when you're not
+      # accessing an API endpoint.
+      #
+      # Catches requests like:
+      #   api.almanac.io/articles/123/title
+      #
+      # All non-GET API requests are already filtered out by the above
+      # REQUEST_METHOD check
+      return false if env['SERVER_NAME'].starts_with? 'api'
+
       request = Rack::Request.new(env)
 
       is_requesting_prerendered_page = true if Rack::Utils.parse_query(request.query_string).has_key?('_escaped_fragment_')
