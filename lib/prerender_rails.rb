@@ -181,9 +181,16 @@ module Rack
       end
     end
 
+    def get_cloudflare_scheme(env)
+      match = /"scheme":"(http|https)"/.match(env['CF-VISITOR'])
+      match && match[1]
+    end
+
     def build_api_url(env)
       request_obj = Rack::Request.new(env)
-      url = "#{request_obj.scheme}://#{request_obj.host}#{request_obj.fullpath}"
+      scheme = @options[:protocol] || get_cloudflare_scheme(env) || request_obj.scheme
+      url = "#{scheme}://#{request_obj.host}#{request_obj.fullpath}"
+
       prerender_url = get_prerender_service_url()
       forward_slash = prerender_url[-1, 1] == '/' ? '' : '/'
       "#{prerender_url}#{forward_slash}#{url}"
