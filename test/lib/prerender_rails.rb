@@ -19,9 +19,9 @@ describe Rack::Prerender do
     stub_request(:get, @prerender.build_api_url(request)).with(:headers => { 'User-Agent' => bot }).to_return(:body => "<html></html>", :status => 301, :headers => { 'Location' => 'http://google.com'})
     response = Rack::Prerender.new(@app).call(request)
 
-    assert_equal response[2].body, ["<html></html>"]
-    assert_equal response[2].status, 301
-    assert_equal( { 'location' => 'http://google.com', 'Content-Length' => '13'}, response[2].headers )
+    assert_equal response[2], ["<html></html>"]
+    assert_equal response[0], 301
+    assert_equal( { 'location' => 'http://google.com'}, response[1] )
   end
 
 
@@ -30,7 +30,7 @@ describe Rack::Prerender do
     stub_request(:get, @prerender.build_api_url(request)).with(:headers => { 'User-Agent' => user }).to_return(:body => "<html></html>")
     response = Rack::Prerender.new(@app).call(request)
 
-    assert_equal ["<html></html>"], response[2].body
+    assert_equal ["<html></html>"], response[2]
   end
 
 
@@ -89,7 +89,7 @@ describe Rack::Prerender do
     stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
     response = @prerender.call(request)
 
-    assert_equal ["<html></html>"], response[2].body
+    assert_equal ["<html></html>"], response[2]
   end
 
 
@@ -98,7 +98,7 @@ describe Rack::Prerender do
     stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
     response = Rack::Prerender.new(@app, whitelist: ['^/search.*page', '/help']).call(request)
 
-    assert_equal ["<html></html>"], response[2].body
+    assert_equal ["<html></html>"], response[2]
   end
 
 
@@ -121,7 +121,7 @@ describe Rack::Prerender do
     stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
     response = Rack::Prerender.new(@app, blacklist: ['^/search', '/help']).call(request)
 
-    assert_equal ["<html></html>"], response[2].body
+    assert_equal ["<html></html>"], response[2]
   end
 
 
@@ -138,7 +138,7 @@ describe Rack::Prerender do
     stub_request(:get, @prerender.build_api_url(request)).to_return(:body => "<html></html>")
     response = Rack::Prerender.new(@app, blacklist: ['^/search', '/help']).call(request)
 
-    assert_equal ["<html></html>"], response[2].body
+    assert_equal ["<html></html>"], response[2]
   end
 
 
@@ -146,7 +146,7 @@ describe Rack::Prerender do
     request = Rack::MockRequest.env_for "/", "HTTP_USER_AGENT" => bot
     response = Rack::Prerender.new(@app, before_render: Proc.new do |env| '<html>cached</html>' end).call(request)
 
-    assert_equal ["<html>cached</html>"], response[2].body
+    assert_equal ["<html>cached</html>"], response[2]
   end
 
 
@@ -154,9 +154,9 @@ describe Rack::Prerender do
     request = Rack::MockRequest.env_for "/", "HTTP_USER_AGENT" => bot
     response = Rack::Prerender.new(@app, before_render: Proc.new do |env| Rack::Response.new('<html>cached2</html>', 200, { 'test' => 'test2Header'}) end).call(request)
 
-    assert_equal ["<html>cached2</html>"], response[2].body
-    assert_equal response[2].status, 200
-    assert_equal( { 'test' => 'test2Header', "Content-Length"=>"20"}, response[2].headers )
+    assert_equal ["<html>cached2</html>"], response[2]
+    assert_equal response[0], 200
+    assert_equal( { 'test' => 'test2Header'}, response[1] )
   end
 
 
