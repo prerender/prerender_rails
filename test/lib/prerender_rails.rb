@@ -160,6 +160,23 @@ describe Rack::Prerender do
   end
 
 
+  it "should continue to app routes if open_timeout is exceeded" do
+    request = Rack::MockRequest.env_for "/", "HTTP_USER_AGENT" => bot
+    stub_request(:get, @prerender.build_api_url(request)).to_raise(Net::OpenTimeout)
+    response = Rack::Prerender.new(@app, open_timeout: 0.1).call(request)
+
+    assert_equal [200, {}, ""], response
+  end
+
+
+  it "should continue to app routes if read_timeout is exceeded" do
+    request = Rack::MockRequest.env_for "/", "HTTP_USER_AGENT" => bot
+    stub_request(:get, @prerender.build_api_url(request)).to_raise(Net::ReadTimeout)
+    response = Rack::Prerender.new(@app, read_timeout: 0.1).call(request)
+
+    assert_equal [200, {}, ""], response
+  end
+
   describe '#buildApiUrl' do
     it "should build the correct api url with the default url" do
       request = Rack::MockRequest.env_for "https://google.com/search?q=javascript"

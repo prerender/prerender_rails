@@ -169,6 +169,8 @@ module Rack
         req.basic_auth(ENV['PRERENDER_USERNAME'], ENV['PRERENDER_PASSWORD']) if @options[:basic_auth]
         http = Net::HTTP.new(url.host, url.port)
         http.use_ssl = true if url.scheme == 'https'
+        http.open_timeout = @options[:open_timeout] if @options[:open_timeout]
+        http.read_timeout = @options[:read_timeout] if @options[:read_timeout]
         response = http.request(req)
         if response['Content-Encoding'] == 'gzip'
           response.body = ActiveSupport::Gzip.decompress(response.body)

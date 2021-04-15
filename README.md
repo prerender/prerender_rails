@@ -104,6 +104,13 @@ Option to hard-set the protocol for Prerender accessing your site instead of the
 config.middleware.use Rack::Prerender, protocol: 'https'
 ```
 
+### timeouts
+
+You can configure Net::HTTP [`open_timeout`](https://ruby-doc.org/stdlib-2.6.5/libdoc/net/http/rdoc/Net/HTTP.html#open_timeout) and [`read_timeout`](https://ruby-doc.org/stdlib-2.6.5/libdoc/net/http/rdoc/Net/HTTP.html#read_timeout) on the proxy request.
+```ruby
+config.middleware.use Rack::Prerender, open_timeout: 2, read_timeout: 10
+```
+
 ## Caching
 
 This rails middleware is ready to be used with [redis](http://redis.io/) or [memcached](http://memcached.org/) to return prerendered pages in milliseconds.
