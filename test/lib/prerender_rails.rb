@@ -159,6 +159,42 @@ describe Rack::Prerender do
     assert_equal( { 'test' => 'test2Header'}, response[1] )
   end
 
+  it "should return a prerendered response stripped of hop-by-hop headers" do
+    request = Rack::MockRequest.env_for "/", "HTTP_USER_AGENT" => bot
+    stub_request(:get, @prerender.build_api_url(request)).
+      with(:headers => { 'User-Agent' => bot }).
+      to_return(:body => "<html></html>", :status => 401, :headers => {
+                  'Content-Type' => 'text/html',
+                  'Transfer-Encoding' => 'Chunked',
+                  'Connection' => 'Keep-Alive',
+                  'Keep-Alive' => 'timeout=5, max=100',
+                  'Public' => 'GET HEAD',
+                  'Proxy-Authenticate' => 'Basic',
+                  'X-Drop-Test' => 'ShouldAlwaysHappen',
+                  'Upgrade' => 'dummy'
+                })
+    response = Rack::Prerender.new(@app).call(request)
+
+    assert_equal response[2], ["<html></html>"]
+    assert_equal response[0], 401
+    assert_equal( { 'content-type' => 'text/html', 'x-drop-test' => 'ShouldAlwaysHappen'}, response[1] )
+  end
+
+it "should return a prerendered response stripped of custom-defined hop-by-hop headers" do
+    request = Rack::MockRequest.env_for "/", "HTTP_USER_AGENT" => bot
+    stub_request(:get, @prerender.build_api_url(request)).
+      with(:headers => { 'User-Agent' => bot }).
+      to_return(:body => "<html></html>", :status => 200, :headers => {
+                  'Content-Type' => 'text/html',
+                  'Connection' => 'Close, X-Drop-Test',
+                  'X-Drop-Test' => 'ShouldNeverHappen'
+                })
+    response = Rack::Prerender.new(@app).call(request)
+
+    assert_equal response[2], ["<html></html>"]
+    assert_equal response[0], 200
+    assert_equal( { 'content-type' => 'text/html' }, response[1] )
+  end
 
   it "should continue to app routes if open_timeout is exceeded" do
     request = Rack::MockRequest.env_for "/", "HTTP_USER_AGENT" => bot

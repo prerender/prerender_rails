@@ -4,6 +4,19 @@ module Rack
     require 'active_support'
 
     def initialize(app, options={})
+      @connection_header_values = [
+        'close',
+        'keep-alive'
+      ].freeze
+      @hop_by_hop_headers = [
+        'Connection',
+        'Keep-Alive',
+        'Public',
+        'Proxy-Authenticate',
+        'Transfer-Encoding',
+        'Upgrade'
+      ].freeze
+
       @crawler_user_agents = [
         'googlebot',
         'yahoo',
@@ -179,6 +192,19 @@ module Rack
           response['Content-Length'] = response.body.length
           response.delete('Content-Encoding')
         end
+
+        hop_by_hop_headers = @hop_by_hop_headers
+        connection = response['Connection']
+        if connection
+          connection_hop_by_hop_headers = connection.split(',').
+                                            map(&:strip).
+                                            map(&:downcase).
+                                            difference(@connection_header_values)
+          hop_by_hop_headers = connection_hop_by_hop_headers.
+                                 concat(hop_by_hop_headers)
+        end
+        hop_by_hop_headers.each { |h| response.delete(h) }
+
         response
       rescue
         nil
