@@ -19,6 +19,7 @@ module Rack
 
       @crawler_user_agents = [
         'googlebot',
+        'Google-InspectionTool',
         'yahoo',
         'bingbot',
         'baiduspider',
