@@ -130,6 +130,7 @@ module Rack
       if(@options[:should_skip_prerender])
         should_skip_prerender = @options[:should_skip_prerender].call(env)
         if(should_skip_prerender)
+          Rails.logger.debug "skipping prerender"
           return false
         end
       end
