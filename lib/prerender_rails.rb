@@ -127,14 +127,6 @@ module Rack
 
     def should_show_prerendered_page(env)
 
-      if(@options[:should_skip_prerender])
-        should_skip_prerender = @options[:should_skip_prerender].call(env)
-        if(should_skip_prerender)
-          Rails.logger.debug "skipping prerender"
-          return false
-        end
-      end
-
       user_agent = env['HTTP_USER_AGENT']
       buffer_agent = env['HTTP_X_BUFFERBOT']
       prerender_agent = env['HTTP_X_PRERENDER']
@@ -174,6 +166,16 @@ module Rack
           blacklistedUrl || blacklistedReferer
         }
         return false
+      end
+
+      if(is_requesting_prerendered_page)
+        if(@options[:should_skip_prerender])
+          should_skip_prerender = @options[:should_skip_prerender].call(env)
+          if(should_skip_prerender)
+            Rails.logger.debug "skipping prerender"
+            return false
+          end
+        end
       end
 
       return is_requesting_prerendered_page
