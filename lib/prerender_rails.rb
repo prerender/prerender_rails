@@ -33,6 +33,7 @@ module Rack
         'showyoubot',
         'outbrain',
         'pinterest/0.',
+        'Pinterestbot',
         'developers.google.com/+/web/snippet',
         'www.google.com/webmasters/tools/richsnippets',
         'slackbot',
