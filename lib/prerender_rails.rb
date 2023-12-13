@@ -209,31 +209,20 @@ module Rack
       end
     end
 
+    def get_cloudflare_scheme(env)
+      match = /"scheme":"(http|https)"/.match(env['CF-VISITOR'])
+      match && match[1]
+    end
 
     def build_api_url(env)
-      new_env = env
-      if env["CF-VISITOR"]
-        match = /"scheme":"(http|https)"/.match(env['CF-VISITOR'])
-        new_env["HTTPS"] = true and new_env["rack.url_scheme"] = "https" and new_env["SERVER_PORT"] = 443 if (match && match[1] == "https")
-        new_env["HTTPS"] = false and new_env["rack.url_scheme"] = "http" and new_env["SERVER_PORT"] = 80 if (match && match[1] == "http")
-      end
+      request_obj = Rack::Request.new(env)
+      scheme = @options[:protocol] || get_cloudflare_scheme(env) || request_obj.scheme
+      url = "#{scheme}://#{request_obj.host}#{request_obj.fullpath}"
 
-      if env["X-FORWARDED-PROTO"]
-        new_env["HTTPS"] = true and new_env["rack.url_scheme"] = "https" and new_env["SERVER_PORT"] = 443 if env["X-FORWARDED-PROTO"].split(',')[0] == "https"
-        new_env["HTTPS"] = false and new_env["rack.url_scheme"] = "http" and new_env["SERVER_PORT"] = 80 if env["X-FORWARDED-PROTO"].split(',')[0] == "http"
-      end
-
-      if @options[:protocol]
-        new_env["HTTPS"] = true and new_env["rack.url_scheme"] = "https" and new_env["SERVER_PORT"] = 443 if @options[:protocol] == "https"
-        new_env["HTTPS"] = false and new_env["rack.url_scheme"] = "http" and new_env["SERVER_PORT"] = 80 if @options[:protocol] == "http"
-      end
-
-      url = Rack::Request.new(new_env).url
       prerender_url = get_prerender_service_url()
       forward_slash = prerender_url[-1, 1] == '/' ? '' : '/'
       "#{prerender_url}#{forward_slash}#{url}"
     end
-
 
     def get_prerender_service_url
       @options[:prerender_service_url] || ENV['PRERENDER_SERVICE_URL'] || 'http://service.prerender.io/'
