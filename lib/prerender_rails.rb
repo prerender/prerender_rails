@@ -177,7 +177,7 @@ module Rack
         headers = {
           'User-Agent' => env['HTTP_USER_AGENT'],
           'Accept-Encoding' => 'gzip',
-          'X-Int-Type' => 'Ruby'
+          'X-Prerender-Int-Type' => 'Ruby'
         }
         headers['X-Prerender-Token'] = ENV['PRERENDER_TOKEN'] if ENV['PRERENDER_TOKEN']
         headers['X-Prerender-Token'] = @options[:prerender_token] if @options[:prerender_token]
