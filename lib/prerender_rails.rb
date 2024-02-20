@@ -176,7 +176,8 @@ module Rack
         url = URI.parse(build_api_url(env))
         headers = {
           'User-Agent' => env['HTTP_USER_AGENT'],
-          'Accept-Encoding' => 'gzip'
+          'Accept-Encoding' => 'gzip',
+          'X-Prerender-Int-Type' => 'Ruby'
         }
         headers['X-Prerender-Token'] = ENV['PRERENDER_TOKEN'] if ENV['PRERENDER_TOKEN']
         headers['X-Prerender-Token'] = @options[:prerender_token] if @options[:prerender_token]
