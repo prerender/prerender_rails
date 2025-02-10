@@ -50,7 +50,13 @@ module Rack
         'Google Page Speed',
         'Qwantify',
         'Chrome-Lighthouse',
-        'TelegramBot'
+        'TelegramBot',
+        'Perplexity',
+        'OAI-SearchBot',
+        'ChatGPT',
+        'GPTBot',
+        'ClaudeBot',
+        'Amazonbot'
       ]
 
       @extensions_to_ignore = [
