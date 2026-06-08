@@ -95,6 +95,7 @@ module Rack
         'amazonbot',
         'ccbot',
         'mistralai-user',
+        'iframely',
       ]
 
       @extensions_to_ignore = [
