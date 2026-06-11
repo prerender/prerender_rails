@@ -74,6 +74,14 @@ describe Rack::Prerender do
   end
 
 
+  it "should continue to app routes if user is a bot, but the bot is requesting a font file" do
+    request = Rack::MockRequest.env_for "/fonts/inter.woff2", "HTTP_USER_AGENT" => bot
+    response = Rack::Prerender.new(@app).call(request)
+
+    assert_equal "", response[2]
+  end
+
+
   it "should continue to app routes if the url is not part of the regex specific whitelist" do
     request = Rack::MockRequest.env_for "/saved/search/blah?_escaped_fragment_=", "HTTP_USER_AGENT" => bot
     response = Rack::Prerender.new(@app, whitelist: ['^/search', '/help']).call(request)

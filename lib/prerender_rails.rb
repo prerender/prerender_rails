@@ -117,7 +117,6 @@ module Rack
         '.rar',
         '.exe',
         '.wmv',
-        '.doc',
         '.avi',
         '.ppt',
         '.mpg',
@@ -136,7 +135,16 @@ module Rack
         '.iso',
         '.flv',
         '.m4v',
-        '.torrent'
+        '.torrent',
+        '.ttf',
+        '.otf',
+        '.woff',
+        '.woff2',
+        '.eot',
+        '.svg',
+        '.webp',
+        '.avif',
+        '.webmanifest'
       ]
 
       @options = options
