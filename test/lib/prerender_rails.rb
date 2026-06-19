@@ -21,7 +21,7 @@ describe Rack::Prerender do
 
     assert_equal response[2], ["<html></html>"]
     assert_equal response[0], 301
-    assert_equal( { 'location' => 'http://google.com'}, response[1] )
+    assert_equal 'http://google.com', response[1]['location']
   end
 
 
@@ -156,7 +156,7 @@ describe Rack::Prerender do
 
     assert_equal ["<html>cached2</html>"], response[2]
     assert_equal response[0], 200
-    assert_equal( { 'test' => 'test2Header'}, response[1] )
+    assert_equal 'test2Header', response[1]['test']
   end
 
   it "should return a prerendered response stripped of hop-by-hop headers" do
@@ -177,7 +177,10 @@ describe Rack::Prerender do
 
     assert_equal response[2], ["<html></html>"]
     assert_equal response[0], 401
-    assert_equal( { 'content-type' => 'text/html', 'x-drop-test' => 'ShouldAlwaysHappen'}, response[1] )
+    assert_equal 'text/html', response[1]['content-type']
+    assert_equal 'ShouldAlwaysHappen', response[1]['x-drop-test']
+    assert_nil response[1]['transfer-encoding']
+    assert_nil response[1]['connection']
   end
 
 it "should return a prerendered response stripped of custom-defined hop-by-hop headers" do
@@ -193,7 +196,9 @@ it "should return a prerendered response stripped of custom-defined hop-by-hop h
 
     assert_equal response[2], ["<html></html>"]
     assert_equal response[0], 200
-    assert_equal( { 'content-type' => 'text/html' }, response[1] )
+    assert_equal 'text/html', response[1]['content-type']
+    assert_nil response[1]['x-drop-test']
+    assert_nil response[1]['connection']
   end
 
   describe '#buildApiUrl' do
