@@ -30,7 +30,6 @@ module Rack
         'developers.google.com/+/web/snippet',
         'www.google.com/webmasters/tools/richsnippets',
         'Google Page Speed',
-        'google-extended',
         'bingbot',
         'yandexbot',
         'yabrowser',
